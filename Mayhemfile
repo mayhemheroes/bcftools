@@ -4,3 +4,5 @@ target: bcftools
 cmds:
   - cmd: /repo/bcftools index @@
     filepath: /test.bcf
+  - cmd: /repo/bcftools stats @@
+    filepath: /test.vcf.gz
