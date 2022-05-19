@@ -1,0 +1,6 @@
+project: rnshah9/bcftools
+target: bcftools
+
+cmds:
+  - cmd: /repo/bcftools index @@
+    filepath: /test.bcf
