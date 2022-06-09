@@ -1,8 +1,6 @@
-project: rnshah9/bcftools
+project: bcftools
 target: bcftools
 
 cmds:
-  - cmd: /repo/bcftools index @@
-    filepath: /test.bcf
-  - cmd: /repo/bcftools stats @@
+  - cmd: /repo/bcftools stats /test.vcf.gz
     filepath: /test.vcf.gz
