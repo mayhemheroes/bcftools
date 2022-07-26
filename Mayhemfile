@@ -2,5 +2,4 @@ project: bcftools
 target: bcftools
 
 cmds:
-  - cmd: /repo/bcftools stats /test.vcf.gz
-    filepath: /test.vcf.gz
+  - cmd: /install/usr/local/bin/bcftools stats @@
