@@ -1,0 +1,5 @@
+project: bcftools
+target: vcmp-set-ref
+
+cmds:
+  - cmd: /fuzz_vcmp_set_ref

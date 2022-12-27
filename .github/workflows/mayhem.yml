@@ -59,7 +59,8 @@ jobs:
       fail-fast: false
       matrix:
         mayhemfile:
-          - mayhem/Mayhemfile
+          - mayhem/Mayhemfile_vcmp_set_ref
+          - mayhem/Mayhemfile_bcftools
 
     steps:
       - uses: actions/checkout@v3
