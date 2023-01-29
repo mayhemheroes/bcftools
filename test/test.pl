@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-#   Copyright (C) 2012-2022 Genome Research Ltd.
+#   Copyright (C) 2012-2023 Genome Research Ltd.
 #
 #   Author: Petr Danecek <pd3@sanger.ac.uk>
 #
@@ -47,6 +47,7 @@ run_test(\&test_vcf_check_merge,$opts,in=>'check',out=>'check_merge.chk');
 run_test(\&test_vcf_stats,$opts,in=>['stats.a','stats.b'],out=>'stats.chk',args=>'-s -');
 run_test(\&test_vcf_stats,$opts,in=>['stats.a','stats.b'],out=>'stats.B.chk',args=>'-s B');
 run_test(\&test_vcf_stats,$opts,in=>['stats.counts'],out=>'stats.counts.chk',args=>'-s -');
+run_test(\&test_vcf_stats,$opts,in=>['stats.counts'],out=>'stats.counts.2.chk',args=>q[-s - -i 'type="snp"']);
 run_test(\&test_vcf_isec,$opts,in=>['isec.a','isec.b'],out=>'isec.ab.out',args=>'-n =2');
 run_test(\&test_vcf_isec,$opts,in=>['isec.a','isec.b'],out=>'isec.ab.flt.out',args=>'-n =2 -i"STRLEN(REF)==2"');
 run_test(\&test_vcf_isec,$opts,in=>['isec.a','isec.b'],out=>'isec.ab.both.out',args=>'-n =2 -c both');
@@ -183,6 +184,9 @@ run_test(\&test_vcf_query,$opts,in=>'view',out=>'query.56.out',args=>q[-f'%ID\\n
 run_test(\&test_vcf_query,$opts,in=>'query.filter.5',out=>'query.57.out',args=>q[-f'[%POS\\t%SAMPLE\\t%GT\\t%AD\\n]' -i'GT="het" & binom(FMT/AD)>0.01']);
 run_test(\&test_vcf_query,$opts,in=>'query.filter.5',out=>'query.58.out',args=>q[-f'[%POS\\t%SAMPLE\\t%GT\\t%AD\\n]' -i'GT="het" & binom(FMT/AD[:0],FMT/AD[:1])>0.01']);
 run_test(\&test_vcf_query,$opts,in=>'query.filter.5',out=>'query.59.out',args=>q[-f'%POS\\t%AD\\n' -i'binom(INFO/AD[0],INFO/AD[1])>0.01']);
+run_test(\&test_vcf_query,$opts,in=>'query.filter.5',out=>'query.92.out',args=>q[-f'[%POS\\t%GT\\t%SAMPLE\\t%AD\\n]' -i'FMT/AD[GT]==10']);
+run_test(\&test_vcf_query,$opts,in=>'query.filter.5',out=>'query.93.out',args=>q[-f'[%POS\\t%GT\\t%SAMPLE\\t%AD\\n]' -i'sSUM(FMT/AD[GT])==210']);
+run_test(\&test_vcf_query,$opts,in=>'query.filter.5',out=>'query.94.out',args=>q[-f'[%POS\\t%GT\\t%SAMPLE\\t%AD\\n]' -i'FMT/AD[0:GT]==30']);
 run_test(\&test_vcf_query,$opts,in=>'query',out=>'query.60.out',args=>q[-f'%CHROM %POS\\n' -i'CHROM="4"']);
 run_test(\&test_vcf_query,$opts,in=>'query.negative',out=>'query.61.out',args=>q[-f'%POS\\t%TAG1\\n' -i'(TAG1>=-129 && TAG1<=-120) || (TAG1>=-32769 && TAG1<=-32760)']);
 run_test(\&test_vcf_query,$opts,in=>'query.negative',out=>'query.61.out',args=>q[-f'%POS\\t%TAGV1\\n' -i'(TAGV1>=-129 && TAGV1<=-120) || (TAGV1>=-32769 && TAGV1<=-32760)']);
@@ -262,6 +266,7 @@ run_test(\&test_vcf_norm,$opts,in=>'atomize.split.1',out=>'atomize.split.1.2.out
 run_test(\&test_vcf_norm,$opts,in=>'atomize.split.2',out=>'atomize.split.2.1.out',args=>'--atomize --old-rec-tag OLD_REC');
 run_test(\&test_vcf_norm,$opts,in=>'atomize.split.2',out=>'atomize.split.2.2.out',args=>'--atomize --atom-overlaps . --old-rec-tag OLD_REC');
 run_test(\&test_vcf_norm,$opts,in=>'atomize.split.3',out=>'atomize.split.3.1.out',args=>'--atomize --atom-overlaps .');
+run_test(\&test_vcf_norm,$opts,in=>'atomize.split.4',out=>'atomize.split.4.1.out',args=>'--atomize --atom-overlaps . --old-rec-tag OLD_REC');
 run_test(\&test_vcf_norm,$opts,in=>'norm.4',out=>'norm.4.1.out',args=>'-m +both');
 run_test(\&test_vcf_norm,$opts,in=>'norm.4',out=>'norm.4.2.out',args=>'-m +any');
 run_test(\&test_vcf_norm,$opts,in=>'norm.5',out=>'norm.5.1.out',args=>'-m - --multi-overlaps 0');
@@ -520,6 +525,9 @@ run_test(\&test_vcf_plugin,$opts,in=>'setGT.3',out=>'setGT.3.6.out',cmd=>'+setGT
 run_test(\&test_vcf_plugin,$opts,in=>'setGT.4',out=>'setGT.4.1.out',cmd=>'+setGT --no-version',args=>q[-- -t q -n . -e 'FMT/DP>90']);
 run_test(\&test_vcf_plugin,$opts,in=>'setGT.4',out=>'setGT.4.2.out',cmd=>'+setGT --no-version',args=>q[-- -t q -n . -e 'FMT/DP>100']);
 run_test(\&test_vcf_plugin,$opts,in=>'setGT.5',out=>'setGT.5.1.out',cmd=>'+setGT --no-version',args=>q[-- -t a -n X]);
+run_test(\&test_vcf_plugin,$opts,in=>'setGT.6',out=>'setGT.6.1.out',cmd=>'+setGT --no-version',args=>q[-- -t ./x -n .]);
+run_test(\&test_vcf_plugin,$opts,in=>'setGT.6',out=>'setGT.6.1.out',cmd=>'+setGT --no-version',args=>q[-- -t . -n .]);
+run_test(\&test_vcf_plugin,$opts,in=>'setGT.6',out=>'setGT.6.2.out',cmd=>'+setGT --no-version',args=>q[-- -t r:0.5 -n .]);
 run_test(\&test_vcf_plugin,$opts,in=>'plugin1',out=>'fill-AN-AC.out',cmd=>'+fill-AN-AC --no-version');
 run_test(\&test_vcf_plugin,$opts,in=>'dosage',out=>'dosage.1.out',cmd=>'+dosage',args=>'-- -t PL');
 run_test(\&test_vcf_plugin,$opts,in=>'dosage',out=>'dosage.2.out',cmd=>'+dosage',args=>'-- -t GL');
@@ -528,6 +536,7 @@ run_test(\&test_vcf_plugin,$opts,in=>'fixploidy',out=>'fixploidy.out',cmd=>'+fix
 run_test(\&test_vcf_plugin,$opts,in=>'view.PL',out=>'guess-ploidy.PL.out',cmd=>'+guess-ploidy',args=>'-vrX | grep -v bcftools');
 run_test(\&test_vcf_plugin,$opts,in=>'view.GL',out=>'guess-ploidy.GL.out',cmd=>'+guess-ploidy',args=>'-vrX | grep -v bcftools');
 run_test(\&test_vcf_plugin,$opts,in=>'view.GL',out=>'view.PL.vcf',cmd=>'+tag2tag --no-version',args=>'-- -r --gl-to-pl');
+run_test(\&test_vcf_plugin,$opts,in=>'view.GL',out=>'view.GL-GP.vcf',cmd=>'+tag2tag --no-version',args=>'-- --gl-to-gp');
 run_test(\&test_vcf_plugin,$opts,in=>'view.GP',out=>'view.GT.vcf',cmd=>'+tag2tag --no-version',args=>'-- -r --gp-to-gt -t 0.2');
 run_test(\&test_vcf_plugin,$opts,in=>'query.variantkey',out=>'query.add-variantkey.vcf',cmd=>'+add-variantkey',args=>'');
 run_test(\&test_vcf_plugin,$opts,in=>'query.variantkey',out=>'variantkey-hex.out',cmd=>'+variantkey-hex',args=>'test/');
