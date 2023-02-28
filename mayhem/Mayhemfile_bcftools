@@ -1,0 +1,5 @@
+project: bcftools
+target: bcftools
+
+cmds:
+  - cmd: /install/usr/local/bin/bcftools stats @@
